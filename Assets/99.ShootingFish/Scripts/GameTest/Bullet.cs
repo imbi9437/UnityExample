@@ -3,12 +3,26 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public Vector3 moveDir;
-    public float moveSpeed = 20f;
+    private bool isCurved = false;
+    
+    public float moveSpeed;
+
+    private void Start()
+    {
+        Destroy(gameObject, 10f);
+    }
 
     private void Update()
     {
-        transform.position += moveDir * (moveSpeed * Time.deltaTime);
+        Vector3 dir = transform.right * moveSpeed;
+
+        if (true)
+        {
+            float a = Mathf.Cos(Time.time * moveSpeed);
+            dir.y += a * moveSpeed;
+            transform.Rotate(0,0,a);
+        }
+        transform.Translate(transform.right * (moveSpeed * Time.deltaTime), Space.World);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

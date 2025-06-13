@@ -13,6 +13,7 @@ public class Spawner : MonoBehaviour
         {
             GameObject enemy = Enemy[Random.Range(0, Enemy.Count)];
             Vector3 spawnPosition = Random.insideUnitCircle * 5;
+            spawnPosition += GameManager.Instance.player.transform.position;
             Instantiate(enemy, spawnPosition, Quaternion.identity);
             
             lastSpawnTime = Time.time;

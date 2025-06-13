@@ -58,8 +58,13 @@ public class Enemy : MonoBehaviour
     public void Hit()
     {
         hp--;
-        
-        if (hp <= 0) Destroy(gameObject);
+
+        if (hp <= 0)
+        {
+            Destroy(gameObject);
+            GameManager.Instance.player.AddExp();
+            return;
+        }
 
         isHit = true;
         effectTime = 0f;

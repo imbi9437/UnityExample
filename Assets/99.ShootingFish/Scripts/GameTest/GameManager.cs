@@ -1,16 +1,10 @@
 using System;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public partial class GameManager : MonoSingleton<GameManager>
 {
-    public static GameManager Instance;
-
+    public Player player;
+    
     public float effectSpeed;
-    public AnimationCurve effectCurve;
     public Gradient hitEffectGradient;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 }

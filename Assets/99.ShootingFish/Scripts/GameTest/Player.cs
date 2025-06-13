@@ -1,69 +1,105 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;
+    private SpriteRenderer characterRenderer;
     private Rigidbody2D rigid;
-    private Vector3 moveDir;
-
+    private Vector3 mouseDir;
     
     private float effectTime;
     private bool isHit = false;
-    
+
+    public float bulletSpeed;
     public int hp;
     public float moveSpeed = 5f;
     public Bullet bullet;
+    public int exp;
+    public int maxExp;
+    public int level;
+    public float fireInterval = 1f;
+    private float lastFireTime = 0;
 
+    private int bulletCount = 1;
+    
+    public List<Transform> shotPoints;
+    private Transform waeponPivot;
+    
+    public SpriteRenderer weaponRenderer;
+    
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        characterRenderer = GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
+
+        waeponPivot = transform.Find("GunPivot");
     }
-    
+
+    private void Start()
+    {
+        InputManager.Instance.OnMove += Move;
+        InputManager.Instance.OnMove += ChangeCharacterFlip;
+
+        InputManager.Instance.OnMouseMove += ChangeWeaponFlip;
+        
+        InputManager.Instance.OnJump += Fire;
+        InputManager.Instance.OnFire1 += Fire;
+    }
+
     private void Update()
     {
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-        
-        spriteRenderer.flipX = x < 0;
-        
-        moveDir = new Vector3(x, y).normalized;
-        Move(moveDir);
-        
-        if (Input.GetButtonDown("Jump") || Input.GetMouseButton(0))
-        {
-            //transform.position += moveDir.normalized * moveSpeed;
-            //움직이는 방향으로 앞으로 일정 거리만크 순간이동 하도록
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition); //마우스가 스크린에서 어느 위치에 있는지 월드 좌표를 반환하는 함수
-            
-            //위치1 에서 위치2로 향하는 방향벡터를 구하는 공식 : 위치2 - 위치1
-            //방향 벡터를 활용할 때, 힘의 크기가 필요 없다면 벡터 길이를 1로 고정.
-            Vector3 fireDir = mousePos - transform.position;
-            fireDir.z = 0;
-            Fire(fireDir.normalized);
-        }
-
         if (!isHit) return;
 
         effectTime += GameManager.Instance.effectSpeed * Time.deltaTime;
-        spriteRenderer.color = GameManager.Instance.hitEffectGradient.Evaluate(effectTime);
+        characterRenderer.color = GameManager.Instance.hitEffectGradient.Evaluate(effectTime);
         if (effectTime > 1)
         {
             isHit = false;
         }
     }
 
+    private void OnDestroy()
+    {
+        InputManager.Instance.OnMove -= Move;
+        InputManager.Instance.OnMove -= ChangeCharacterFlip;
+
+        InputManager.Instance.OnMouseMove -= ChangeWeaponFlip;
+        InputManager.Instance.OnJump -= Fire;
+        InputManager.Instance.OnFire1 -= Fire;
+    }
+
     private void Move(Vector3 dir)
     {
-        //transform.Translate(dir * (moveSpeed * Time.deltaTime));
         rigid.linearVelocity = dir * moveSpeed;
     }
 
-    private void Fire(Vector3 fireDir)
+    private void ChangeCharacterFlip(Vector3 dir)
     {
-        Bullet obj = Instantiate(bullet, transform.position, Quaternion.identity);
-        obj.moveDir = fireDir;
+        if (dir.x < 0) characterRenderer.flipX = true;
+        else if (dir.x > 0) characterRenderer.flipX = false;
+    }
+
+    private void ChangeWeaponFlip(Vector3 pos)
+    {
+        mouseDir = pos - transform.position;
+        mouseDir.Normalize();
+        
+        waeponPivot.right = mouseDir;
+        weaponRenderer.flipY = mouseDir.x < 0;
+    }
+    
+    private void Fire()
+    {
+        if (Time.time < lastFireTime + fireInterval) return;
+        
+        lastFireTime = Time.time;
+
+        for (int i = 0; i < bulletCount; i++)
+        {
+            Bullet obj = Instantiate(bullet, shotPoints[i].position, shotPoints[i].rotation);
+            obj.moveSpeed = bulletSpeed;
+        }
     }
 
     public void Hit()
@@ -73,5 +109,16 @@ public class Player : MonoBehaviour
         
         isHit = true;
         effectTime = 0f;
+    }
+
+    public void AddExp()
+    {
+        exp++;
+        if (exp >= maxExp)
+        {
+            level++;
+            maxExp *= 2;
+            bulletCount = Mathf.Clamp(++bulletCount, 1, shotPoints.Count);
+        }
     }
 }
