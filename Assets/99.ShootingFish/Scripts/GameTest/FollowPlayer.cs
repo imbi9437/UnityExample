@@ -13,7 +13,7 @@ public class FollowPlayer : MonoBehaviour
 
         Vector3 pos = playerTransform.position;
         pos.z = transform.position.z;
-
+        
         transform.position = allowDampMotion == false ? pos : Vector3.Lerp(transform.position, pos, 0.1f);
     }
 }

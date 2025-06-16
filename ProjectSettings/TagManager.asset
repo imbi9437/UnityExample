@@ -6,13 +6,18 @@ TagManager:
   tags:
   - Enemy
   - Boundary
+  - TrackingObject
+  - Actors
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
+  - Wall
+  - Enemy
+  - Ground
   - 
   - 
   - 
@@ -35,10 +40,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - None
   m_SortingLayers:
   - name: Default
     uniqueID: 0

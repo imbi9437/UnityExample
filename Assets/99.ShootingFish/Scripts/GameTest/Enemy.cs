@@ -42,9 +42,6 @@ public class Enemy : MonoBehaviour
         {
             isHit = false;
         }
-
-        //rigidbody가 붙어있으므로 Transform 자체를 제어하는것보다는 Rigidbody에 의존하는게 좋다
-        //transform.Translate(moveDir * (moveSpeed * Time.deltaTime));
     }
 
     private void OnCollisionEnter2D(Collision2D other)
