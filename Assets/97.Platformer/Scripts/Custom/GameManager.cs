@@ -1,29 +1,34 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using _00.Custom;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Platformer
 {
     public class GameManager : MonoSingleton<GameManager>
     {
-        private const int initGroundCount = 20;
-        
         public Player player;
         public Ground originGround;
+        public Enemy enemyOrigin;
+        public Transform minHeight;
 
-        [Space(10), Header("UI")] public Text text;
+        [Space(10), Header("UI")] 
+        public Text text;
         
         [Space(15),Header("InGame Setting Value")]
-        public float maxPossibleDistance = 20f;
-        public float groundHeightDiff = 4f;
+        public float generateDistance = 4f;
+        public float groundRemoveDelay = 5f;
+        public Vector2 enemySpeed;
+
+        public Action playerHitAction;
         
-        [Range(-8f, 0f)] public float maxLeftPos;
-        [Range(0f, 8f)] public float maxRightPos;
-
-        private int groundIndex;
-        private float bestHeight = float.MinValue;
+        private Queue<Ground> groundQueue = new Queue<Ground>();
+        
         private int score;
-
+        
         public int Score
         {
             get => score;
@@ -36,16 +41,13 @@ namespace Platformer
         
         private void Start()
         {
-            groundIndex = 1;
-            InitGround();
-            text.text = $"Score : {score}";
+            Score = 0;
+            StartCoroutine(SpawnEnemy());
         }
 
         private void Update()
         {
-            if (player.transform.position.y > bestHeight) bestHeight = player.transform.position.y;
-
-            if (player.transform.position.y < bestHeight - maxPossibleDistance)
+            if (player.transform.position.y < minHeight.position.y)
             {
                 #if UNITY_EDITOR
                 Debug.Log("<color=#FF0000>Game Over</color>");
@@ -55,29 +57,38 @@ namespace Platformer
                 #endif
             }
         }
-
-        private void InitGround()
+        
+        private void GenerateGround()
         {
-            for (int i = 0; i < initGroundCount; i++)
-            {
-                float height = groundIndex * groundHeightDiff;
-                float xPos = UnityEngine.Random.Range(maxLeftPos, maxRightPos);
-                Vector2 pos = new Vector2(xPos, height);
-                var obj = Instantiate(originGround, pos, Quaternion.identity);
-                obj.gameObject.name += i;
-                groundIndex++;
-            }
+            Ground ground = groundQueue.Count <= 0
+                ? Instantiate(originGround, Vector3.zero, Quaternion.identity)
+                : groundQueue.Dequeue();
+            
+            Vector2 randomPos = Random.insideUnitCircle * generateDistance;
+            Vector3 pos = player.transform.position + new Vector3(randomPos.x, 0, randomPos.y);
+            pos.y = Mathf.Min(minHeight.position.y, pos.y);
+            ground.transform.position = pos;
+            ground.gameObject.SetActive(true);
+        }
+        public void RemoveGround(Ground ground)
+        {
+            groundQueue.Enqueue(ground);
+            ground.gameObject.SetActive(false);
+            GenerateGround();
         }
 
-        public void GenerateGround(Ground ground)
+        private IEnumerator SpawnEnemy()
         {
-            float yPos = groundIndex * groundHeightDiff;
-            float xPos = UnityEngine.Random.Range(maxLeftPos, maxRightPos);
-            
-            Vector3 pos = new Vector3(xPos, yPos, 0f);
-            ground.transform.position = pos;
-            groundIndex++;
-            ground.index = groundIndex;
+            while (true)
+            {
+                yield return YieldCache.WaitForSeconds(2f);
+                
+                Vector2 randomPos = Random.insideUnitCircle * generateDistance;
+                Vector3 pos = player.transform.position + new Vector3(randomPos.x,randomPos.y,0);
+                
+                Enemy enemy = Instantiate(enemyOrigin, pos, Quaternion.identity);
+                enemy.Init(player, Random.Range(enemySpeed.x, enemySpeed.y));
+            }
         }
     }
 }

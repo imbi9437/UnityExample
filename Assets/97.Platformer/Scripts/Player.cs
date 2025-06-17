@@ -31,7 +31,6 @@ namespace Platformer
         private void Update()
         {
             Move();
-            CheckCanJump();
             if (Input.GetButtonDown("Jump")) Jump();
         }
 
@@ -39,9 +38,10 @@ namespace Platformer
         {
             float x = Input.GetAxis("Horizontal");
             
-            rb.AddForceX(x * moveSpeed);
             
-            //실수의 ==를 연산할 때 안전한 함수
+            rb.linearVelocity = new Vector2(x * moveSpeed, rb.linearVelocity.y);
+            //rb.AddForceX(x * moveSpeed);
+            
             if (Mathf.Approximately(x, 0f) == false)
             {
                 sr.flipX = x < 0f;
@@ -57,16 +57,20 @@ namespace Platformer
         {
             if (canJump == false) return;
             rb.AddForceY(jumpForce, ForceMode2D.Impulse);
-            canJump = false;
         }
 
-        private void CheckCanJump()
+        private void OnCollisionEnter2D(Collision2D other)
         {
-            Vector2 startPos = col.bounds.center;
-            startPos.y -= col.bounds.extents.y;
-            int mask = LayerMask.GetMask("Ground");
-            canJump = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0, Vector2.down, 0.1f, mask);
-            ani.SetBool(IsJumping, canJump == false);
+            if (other.gameObject.layer != LayerMask.NameToLayer("Ground")) return;
+            canJump = true;
+            ani.SetBool(IsJumping, false);
+        }
+        
+        private void OnCollisionExit2D(Collision2D other)
+        {
+            if (other.gameObject.layer != LayerMask.NameToLayer("Ground")) return;
+            canJump = false;
+            ani.SetBool(IsJumping, true);
         }
     }
 }
