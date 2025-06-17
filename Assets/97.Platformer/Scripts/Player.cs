@@ -18,7 +18,7 @@ namespace Platformer
         [SerializeField]private SpriteRenderer sr;
 
         private bool canJump = false;
-        
+
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();

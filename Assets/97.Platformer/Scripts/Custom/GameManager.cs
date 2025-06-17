@@ -65,8 +65,8 @@ namespace Platformer
                 : groundQueue.Dequeue();
             
             Vector2 randomPos = Random.insideUnitCircle * generateDistance;
-            Vector3 pos = player.transform.position + new Vector3(randomPos.x, 0, randomPos.y);
-            pos.y = Mathf.Min(minHeight.position.y, pos.y);
+            Vector3 pos = player.transform.position + new Vector3(randomPos.x, randomPos.y, 0);
+            pos.y = Mathf.Max(minHeight.position.y, pos.y);
             ground.transform.position = pos;
             ground.gameObject.SetActive(true);
         }

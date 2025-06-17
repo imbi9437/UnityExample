@@ -9,6 +9,8 @@ namespace Platformer
         private Player target;
         private float moveSpeed;
 
+        public float hitForce;
+
         private void Awake()
         {
             renderer = GetComponentInChildren<SpriteRenderer>();
@@ -33,9 +35,8 @@ namespace Platformer
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.layer != LayerMask.NameToLayer("Player")) return;
-            Rigidbody2D playerRigid = other.gameObject.GetComponent<Rigidbody2D>();
+            Player player = other.gameObject.GetComponent<Player>();
             Vector2 dir = other.gameObject.transform.position - transform.position;
-            playerRigid.AddForce(dir.normalized * 20f, ForceMode2D.Impulse);
             GameManager.Instance.playerHitAction?.Invoke();
             Destroy(gameObject);
         }
