@@ -1,18 +1,25 @@
 using System;
 using System.Collections;
 using System.Linq;
-using _00.Custom;
+using Custom;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Platformer
 {
     public class Ground : MonoBehaviour
     {
         [SerializeField] private Collider2D collisionCol;
-
+        
+        public Image gauge;
+        public Transform arrow;
+        public Canvas canvas;
+        
+        
         private Coroutine removePosCo;
         
         private bool isGround;
+        private float liftTime;
         
         
         private void Awake()
@@ -24,9 +31,23 @@ namespace Platformer
         private void OnEnable()
         {
             removePosCo = StartCoroutine(RemovePosCo());
+            liftTime = 0f;
         }
-        
-        
+
+
+        private void Update()
+        {
+            if (isGround)
+            {
+                liftTime += Time.deltaTime;
+                gauge.fillAmount = 1 - liftTime / GameManager.Instance.groundRemoveDelay;
+                Quaternion from = Quaternion.Euler(0,0,-90);
+                Quaternion to = Quaternion.Euler(0,0,90);
+                
+                arrow.rotation = Quaternion.Slerp(from, to, liftTime / GameManager.Instance.groundRemoveDelay);
+            }
+        }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.layer != LayerMask.NameToLayer("Player")) return;
@@ -47,6 +68,8 @@ namespace Platformer
             
             isGround = true;
             GameManager.Instance.Score++;
+            canvas.enabled = true;
+            
         }
 
         private void OnDisable()
@@ -54,6 +77,7 @@ namespace Platformer
             StopCoroutine(removePosCo);
             removePosCo = null;
             isGround = false;
+            canvas.enabled = false;
         }
         
 

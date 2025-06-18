@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Platformer
 {
@@ -8,9 +9,13 @@ namespace Platformer
         private SpriteRenderer renderer;
         private Player target;
         private float moveSpeed;
+        private float lifeTime;
 
-        public float hitForce;
-
+        public Image effectImage;
+        public Image hpGauge;
+        
+        public float lifeTimeMax = 10f;
+        
         private void Awake()
         {
             renderer = GetComponentInChildren<SpriteRenderer>();
@@ -18,6 +23,12 @@ namespace Platformer
 
         private void Update()
         {
+            if (effectImage.fillAmount > 0f)
+            {
+                effectImage.fillAmount -= Time.deltaTime * 0.5f;
+                return;
+            }
+            
             Vector3 dir = target.transform.position - transform.position;
             dir.z = 0;
             dir = dir.normalized;
@@ -29,7 +40,15 @@ namespace Platformer
             {
                 renderer.flipY = dir.x < 0f;
             }
-            transform.right = dir;
+            renderer.transform.right = dir;
+            
+            lifeTime += Time.deltaTime;
+            hpGauge.fillAmount = 1 - lifeTime/lifeTimeMax;
+
+            if (hpGauge.fillAmount <= 0f)
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D other)

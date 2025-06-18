@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 
-namespace _00.Custom
+namespace Custom
 {
     public static class YieldCache
     {

@@ -1,4 +1,5 @@
 using System;
+using Custom;
 using UnityEngine;
 
 public partial class GameManager : MonoSingleton<GameManager>
