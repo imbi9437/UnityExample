@@ -15,7 +15,7 @@ namespace _99_1.CustomShootingFish
         public float pivotDistance;
         
         //함수 호출마다 총알 개수 늘어남
-        private void AddBullet()
+        private void SortForwardBulletPivots()
         {
             int pivotCount = bulletPivots.Count;
             

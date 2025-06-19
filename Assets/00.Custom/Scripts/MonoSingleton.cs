@@ -29,7 +29,11 @@ namespace Custom
 
         protected virtual void Awake()
         {
-            if (_instance) DestroyImmediate(gameObject);
+            if (_instance)
+            {
+                Debug.LogWarning("More than one instance of " + typeof(T) + " exists in the scene.");
+                Destroy(gameObject);
+            }
             else _instance = this as T;
         }
 
