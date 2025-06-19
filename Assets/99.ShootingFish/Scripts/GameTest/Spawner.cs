@@ -1,22 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawner : MonoBehaviour
+namespace _99.ShootingFishTest
 {
-    public List<GameObject> Enemy;
-    public float interval;
-    private float lastSpawnTime;
-    
-    void Update()
+    public class Spawner : MonoBehaviour
     {
-        if (Time.time > interval + lastSpawnTime)
+        public List<GameObject> Enemy;
+        public float interval;
+        private float lastSpawnTime;
+
+        void Update()
         {
-            GameObject enemy = Enemy[Random.Range(0, Enemy.Count)];
-            Vector3 spawnPosition = Random.insideUnitCircle * 5;
-            spawnPosition += GameManager.Instance.player.transform.position;
-            Instantiate(enemy, spawnPosition, Quaternion.identity);
-            
-            lastSpawnTime = Time.time;
+            if (Time.time > interval + lastSpawnTime)
+            {
+                GameObject enemy = Enemy[Random.Range(0, Enemy.Count)];
+                Vector3 spawnPosition = Random.insideUnitCircle * 5;
+                spawnPosition += GameManager.Instance.player.transform.position;
+                Instantiate(enemy, spawnPosition, Quaternion.identity);
+
+                lastSpawnTime = Time.time;
+            }
         }
     }
 }

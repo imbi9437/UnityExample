@@ -1,39 +1,43 @@
 using System;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+namespace _99.ShootingFishTest
 {
-    private bool isCurved = false;
-    
-    public float moveSpeed;
-
-    private void Start()
+    public class Bullet : MonoBehaviour
     {
-        Destroy(gameObject, 10f);
-    }
+        private bool isCurved = false;
 
-    private void Update()
-    {
-        Vector3 dir = transform.right * moveSpeed;
+        public float moveSpeed;
 
-        if (true)
+        private void Start()
         {
-            float a = Mathf.Cos(Time.time * moveSpeed);
-            dir.y += a * moveSpeed;
-            transform.Rotate(0,0,a);
+            Destroy(gameObject, 10f);
         }
-        transform.Translate(transform.right * (moveSpeed * Time.deltaTime), Space.World);
-    }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player")) return;
-        
-        Destroy(gameObject);
-
-        if (other.CompareTag("Enemy"))
+        private void Update()
         {
-            other.GetComponent<Enemy>().Hit();
+            Vector3 dir = transform.right * moveSpeed;
+
+            if (true)
+            {
+                float a = Mathf.Cos(Time.time * moveSpeed);
+                dir.y += a * moveSpeed;
+                transform.Rotate(0, 0, a);
+            }
+
+            transform.Translate(transform.right * (moveSpeed * Time.deltaTime), Space.World);
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Player")) return;
+
+            Destroy(gameObject);
+
+            if (other.CompareTag("Enemy"))
+            {
+                other.GetComponent<Enemy>().Hit();
+            }
         }
     }
 }

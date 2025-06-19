@@ -2,68 +2,71 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-
-public class Enemy : MonoBehaviour
+namespace _99.ShootingFishTest
 {
-    [SerializeField] private int hp;
-    public float moveSpeed; //적들이 움직일 기본 속도
-    public float turnInterval; //적들이 방향을 바꿀 주기
-    private Vector2 moveDir; //적들이 움직일 방향
-    private Rigidbody2D rigid;
-    private SpriteRenderer renderer;
-
-    private float lastTurnTime; //마지막으로 방향을 바꾼 시간
-
-    private float effectTime;
-    private bool isHit = false;
-    
-    private void Awake()
+    public class Enemy : MonoBehaviour
     {
-        rigid = GetComponent<Rigidbody2D>();
-        renderer = GetComponent<SpriteRenderer>();
-    }
+        [SerializeField] private int hp;
+        public float moveSpeed; //적들이 움직일 기본 속도
+        public float turnInterval; //적들이 방향을 바꿀 주기
+        private Vector2 moveDir; //적들이 움직일 방향
+        private Rigidbody2D rigid;
+        private SpriteRenderer renderer;
 
-    private void Update()
-    {
-        if (Time.time > lastTurnTime + turnInterval)
+        private float lastTurnTime; //마지막으로 방향을 바꾼 시간
+
+        private float effectTime;
+        private bool isHit = false;
+
+        private void Awake()
         {
-            //방향 바꿈
-            moveDir = Random.insideUnitCircle;
-            lastTurnTime = Time.time;
-
-            rigid.linearVelocity = moveDir * moveSpeed;
+            rigid = GetComponent<Rigidbody2D>();
+            renderer = GetComponent<SpriteRenderer>();
         }
 
-        if (isHit == false) return;
-        
-        effectTime += GameManager.Instance.effectSpeed * Time.deltaTime;
-        renderer.color = GameManager.Instance.hitEffectGradient.Evaluate(effectTime);
-        if (effectTime > 1)
+        private void Update()
         {
-            isHit = false;
-        }
-    }
+            if (Time.time > lastTurnTime + turnInterval)
+            {
+                //방향 바꿈
+                moveDir = Random.insideUnitCircle;
+                lastTurnTime = Time.time;
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            other.transform.GetComponent<Player>().Hit();
-        }
-    }
+                rigid.linearVelocity = moveDir * moveSpeed;
+            }
 
-    public void Hit()
-    {
-        hp--;
+            if (isHit == false) return;
 
-        if (hp <= 0)
-        {
-            Destroy(gameObject);
-            GameManager.Instance.player.AddExp();
-            return;
+            effectTime += GameManager.Instance.effectSpeed * Time.deltaTime;
+            renderer.color =
+                GameManager.Instance.hitEffectGradient.Evaluate(effectTime);
+            if (effectTime > 1)
+            {
+                isHit = false;
+            }
         }
 
-        isHit = true;
-        effectTime = 0f;
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (other.gameObject.CompareTag("Player"))
+            {
+                other.transform.GetComponent<Player>().Hit();
+            }
+        }
+
+        public void Hit()
+        {
+            hp--;
+
+            if (hp <= 0)
+            {
+                Destroy(gameObject);
+                GameManager.Instance.player.AddExp();
+                return;
+            }
+
+            isHit = true;
+            effectTime = 0f;
+        }
     }
 }

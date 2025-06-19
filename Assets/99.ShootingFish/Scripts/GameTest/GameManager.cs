@@ -1,12 +1,19 @@
-using System;
 using Custom;
 using UnityEngine;
 
-public partial class GameManager : MonoSingleton<GameManager>
+namespace _99.ShootingFishTest
 {
-    public Player player;
-    public Spawner spawner;
-    
-    public float effectSpeed;
-    public Gradient hitEffectGradient;
+    public partial class GameManager : MonoSingleton<GameManager>
+    {
+        public Player player;
+        public Spawner spawner;
+
+        public float effectSpeed;
+        public Gradient hitEffectGradient;
+
+        public void PauseGame(bool isPause)
+        {
+            Time.timeScale = isPause ? 0 : 1;
+        }
+    }
 }

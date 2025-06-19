@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 
-public class Rotater : MonoBehaviour
+namespace _99.ShootingFishTest
 {
-    [Tooltip("초당 회전 각도")]
-    public Vector3 rotateAxis;
-
-    private void Update()
+    public class Rotater : MonoBehaviour
     {
-        transform.Rotate(rotateAxis * Time.deltaTime);
+        [Tooltip("초당 회전 각도")] public Vector3 rotateAxis;
+
+        private void Update()
+        {
+            transform.Rotate(rotateAxis * Time.deltaTime);
+        }
     }
 }
