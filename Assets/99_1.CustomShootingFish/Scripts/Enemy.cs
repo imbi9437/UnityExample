@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _99_1.CustomShootingFish
 {
-    public class Enemy : MonoBehaviour
+    public class Enemy : MonoBehaviour, IHitAble
     {
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -25,15 +27,23 @@ namespace _99_1.CustomShootingFish
             _rigidbody.linearVelocity = moveDir * moveSpeed;
         }
 
-        public void Hit()
+        private void OnCollisionEnter2D(Collision2D other)
         {
-            hp--;
+            if (other.gameObject.TryGetComponent(out IHitAble hitAble) == false) return;
+            
+        }
+        
+        public void Hit(int damage)
+        {
+            hp -= damage;
+            
+            if (hp <= 0) Die();
+        }
 
-            if (hp <= 0)
-            {
-                _player.GetExp(Random.Range(0,9));
-                Destroy(gameObject);
-            }
+        public void Die()
+        {
+            _player.GetExp(Random.Range(0,9));
+            Destroy(gameObject);
         }
     }
 }

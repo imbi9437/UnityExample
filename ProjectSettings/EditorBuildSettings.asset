@@ -4,7 +4,16 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/96.SpaceShooter/Scenes/SpaceShooterStart.unity
+    guid: 0677e73c23e19af4082ffbf64942e64b
+  - enabled: 1
+    path: Assets/96.SpaceShooter/Scenes/SpaceShooter.unity
+    guid: 3d149fc063851f04f9a34a8fb4b93002
+  - enabled: 1
+    path: Assets/96.SpaceShooter/Scenes/SpaceShooterEnd.unity
+    guid: c5ead014df43cf240b24b6febc2d5765
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

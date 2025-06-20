@@ -19,7 +19,7 @@ namespace Custom
                     if (_instance == false) _instance = FindAnyObjectByType<T>();
                     if (_instance) return _instance;
 
-                    GameObject obj = new GameObject(nameof(T));
+                    GameObject obj = new GameObject(typeof(T).Name);
                     _instance = obj.AddComponent<T>();
 
                     return _instance;

@@ -17,6 +17,10 @@ namespace _99_1.CustomShootingFish
         protected List<Transform> pivots;
         public Bullet bulletPrefab;
 
+        protected float lastFireTime;
+        protected float interval;
+        protected abstract float AdjustInterval { get; }
+
         public abstract void Fire();
         public abstract void AddPivot();
 
@@ -25,6 +29,9 @@ namespace _99_1.CustomShootingFish
             mainPivot = transform.Find("MainPivot");
             pivots = new List<Transform>();
             AddPivot();
+
+            lastFireTime = 0;
+            interval = 0.1f;
         }
     }
 }

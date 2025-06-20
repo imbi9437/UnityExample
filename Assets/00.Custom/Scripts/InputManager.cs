@@ -15,6 +15,8 @@ namespace Custom
         public Action OnJump;
         public Action OnFixedJump;
         public Action OnFire1;
+        public Action OnFire1Down;
+        public Action OnFire1Up;
         public Action OnFixedFire1;
 
         public Action OnEscape;
@@ -23,6 +25,8 @@ namespace Custom
         private Vector3 mousePos;
         private bool jumpInput;
         private bool fireInput;
+        private bool fireDownInput;
+        private bool fireUpInput;
 
         private bool escapeInput;
 
@@ -37,6 +41,8 @@ namespace Custom
             moveInput.y = Input.GetAxis("Vertical");
             jumpInput = Input.GetButton("Jump");
             fireInput = Input.GetButton("Fire1");
+            fireDownInput = Input.GetButtonDown("Fire1");
+            fireUpInput = Input.GetButtonUp("Fire1");
             escapeInput = Input.GetKeyDown(KeyCode.Escape);
 
             if (_camera == false) _camera = Camera.main;
@@ -58,6 +64,8 @@ namespace Custom
 
             if (jumpInput) OnJump?.Invoke();
             if (fireInput) OnFire1?.Invoke();
+            if (fireDownInput) OnFire1Down?.Invoke();
+            if (fireUpInput) OnFire1Up?.Invoke();
             if (escapeInput) OnEscape?.Invoke();
         }
 

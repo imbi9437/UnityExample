@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace _99_1.CustomShootingFish
 {
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, IHitAble
     {
         public class Events
         {
@@ -32,14 +32,6 @@ namespace _99_1.CustomShootingFish
         private int exp;
         private int level;
         public float moveSpeed;
-        
-        
-        //todo : Scheduler Event
-        private bool canInputFire = true;
-        private bool canAutoFire = true;
-
-        private float lastInputFireTime = 0;
-        private float lastAutoFireTime = 0;
 
         #region Unity Message Methods
 
@@ -62,11 +54,6 @@ namespace _99_1.CustomShootingFish
 
             InputManager.Instance.OnJump += InputFire;
             InputManager.Instance.OnFire1 += InputFire;
-        }
-
-        private void Update()
-        {
-            CheckAttackable();
         }
         
         private void OnDisable()
@@ -101,25 +88,10 @@ namespace _99_1.CustomShootingFish
             weaponPivot.right = mouseDir;
             weaponRenderer.flipY = mouseDir.x < 0;
         }
-
         
-        //todo : Weapon으로 이전
-        private void InputFire()
-        {
-            if (canInputFire == false) return;
-            
-            Fire(WeaponFireType.InputTrigger);
-            canInputFire = false;
-            lastInputFireTime = Time.time;
-        }
-        private void AutoFire()
-        {
-            if (canAutoFire == false) return;
-            
-            Fire(WeaponFireType.AutoFire);
-            canAutoFire = false;
-            lastAutoFireTime = Time.time;
-        }
+        
+        private void InputFire() => Fire(WeaponFireType.InputTrigger);
+        private void AutoFire() => Fire(WeaponFireType.AutoFire);
         private void Fire(WeaponFireType fireType)
         {
             foreach (var weapon in weapons)
@@ -128,39 +100,18 @@ namespace _99_1.CustomShootingFish
                 weapon.Fire();
             }
         }
-        private void CheckAttackable()
-        {
-            if (canInputFire && canAutoFire) return;
-
-            if (canInputFire == false)
-            {
-                float interval = GameManager.DefaultGameParam.PlayerInputFireInterval;
-                if (Time.time >= lastInputFireTime + interval)
-                {
-                    canInputFire = true;
-                }
-            }
-
-            if (canAutoFire == false)
-            {
-                float interval = GameManager.DefaultGameParam.PlayerAutoFireInterval;
-                if (Time.time >= lastAutoFireTime + interval)
-                {
-                    canAutoFire = true;
-                }
-            }
-        }
-        
-        
 
         public void Hit(int damage)
         {
             hp -= damage;
             
             Subscribes.OnHit?.Invoke();
-            if (hp <= 0) Subscribes.OnDie?.Invoke();
+            if (hp <= 0) Die();
         }
-
+        public void Die()
+        {
+            Subscribes.OnDie?.Invoke();
+        }
         public void GetExp(int exp)
         {
             this.exp += exp;
@@ -168,7 +119,6 @@ namespace _99_1.CustomShootingFish
             Subscribes.OnGetExp?.Invoke();
             if (this.exp >= maxExp) LevelUp();
         }
-
         private void LevelUp()
         {
             exp = 0;

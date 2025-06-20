@@ -19,7 +19,7 @@ public class TransformMover : MonoBehaviour
         float z = Input.GetAxis("Vertical");
 
         
-        // moveDir = new Vector3(x, 0, z);
+         moveDir = new Vector3(x, 0, z);
         
         // transform.Translate(moveDir * (moveSpeed * Time.deltaTime));
         // Rigidbody에 의해 물리 작용을 밪는 객체가 Update에서 transform을 제어하는 연산을 수행하면 물리연산과 시점이 맞지 않아 움직임이 어색함

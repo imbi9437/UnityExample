@@ -10,14 +10,14 @@ namespace _99_1.CustomShootingFish
         
         
         [Space(10),Header("Game Parameters")]
-        [SerializeField] private GameParameters gameParameters;
+        [SerializeField] private GameParameters gameParameters = new GameParameters();
         
 
-        public static GameParameters DefaultGameParam => GameManager.Instance.gameParameters;
+        public static GameParameters DefaultGameParam => Instance.gameParameters;
         
         private void Start()
         {
-            player.gameObject.SetActive(true);
+            player?.gameObject.SetActive(true);
         }
 
 

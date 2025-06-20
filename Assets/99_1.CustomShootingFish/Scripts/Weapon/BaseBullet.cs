@@ -24,7 +24,7 @@ namespace _99_1.CustomShootingFish
 
             if (other.CompareTag("Enemy"))
             {
-                other.GetComponent<Enemy>().Hit();
+                other.GetComponent<Enemy>().Hit(1);
             }
         }
     }

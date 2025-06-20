@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 public class UnityAttributeTest : MonoBehaviour
@@ -39,10 +38,4 @@ public class UnityAttributeTest : MonoBehaviour
 
     //또는 public property로 작성하는것이 가장 적합함.
     public int IntProperty { get; set; }
-
-    [MenuItem("Test/Test")]
-    public static void Test()
-    {
-        
-    }
 }

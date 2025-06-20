@@ -5,16 +5,21 @@ namespace _99_1.CustomShootingFish
     public class ForwardGun : Weapon
     {
         public override WeaponFireType FireType => WeaponFireType.InputTrigger;
+        protected override float AdjustInterval => GameManager.DefaultGameParam.PlayerInputFireInterval; 
         
         //todo : 해당 변수 위치 이동 필요할 듯
         public float pivotDistance = 0.1f;
         
         public override void Fire()
         {
+            float calcInterval = interval + AdjustInterval;
+            if (Time.time <= lastFireTime + calcInterval) return;
             foreach (Transform pivot in pivots)
             {
                 Instantiate(bulletPrefab, pivot.position, pivot.rotation);
             }
+            
+            lastFireTime = Time.time;
         }
 
         public override void AddPivot()
